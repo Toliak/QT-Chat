@@ -1,7 +1,7 @@
 #include <iostream>
 #include <QApplication>
 
-#include "Client/MainWindow.h"
+#include "Client/Core/MainWindow.h"
 
 int main(int argc, char *argv[])
 {

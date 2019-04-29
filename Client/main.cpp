@@ -1,15 +1,14 @@
 #include <iostream>
 #include <QApplication>
 
-#include "MainWindow.h"
+#include "Window/AuthDialog.h"
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Hello, World!" << std::endl;
-
     QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+
+    AuthDialog authWindow;
+    authWindow.show();
 
     return QApplication::exec();
 }
