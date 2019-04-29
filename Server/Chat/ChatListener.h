@@ -79,7 +79,7 @@ private slots:
             client->sendData(
                 {
                     {"id", 1},
-                    {"message", "Name is already exists"}
+                    {"text", "Name is already exists"}
                 },
                 "error"
             );
@@ -110,7 +110,7 @@ private slots:
             return;
         }
 
-        QString message = data["message"].toString();
+        QString message = data["text"].toString();
 
         Listener::sendDataToAll(
             {
