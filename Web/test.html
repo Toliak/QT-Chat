@@ -167,6 +167,20 @@
                 return f(data);
             }
         }
+
+        static onReadyStateChange(event) {
+            if (event.readyState === 4 && event.status === 0) {
+                $("#alert-auth")
+                    .text("Cannot connect to server")
+                    .removeClass("d-none");
+            }
+        }
+
+        static onError(event) {
+            $("#alert-auth")
+                .text("Error occurred")
+                .removeClass("d-none");
+        }
     }
 
     $("#connect").on("click", function () {
@@ -177,14 +191,15 @@
             document.server = new WebSocket($("#address").val());
         } catch {
             alert
-                .text("Cannot connect to server")
+                .text("Wrong connection address")
                 .removeClass("d-none");
 
             return;
         }
 
+        document.server.addEventListener("readystatechange", Server.onReadyStateChange);
+        document.server.addEventListener("error", Server.onError);
         document.server.addEventListener("message", Server.onMessage);
-
         document.server.addEventListener("open", Server.onOpen);
     });
 </script>

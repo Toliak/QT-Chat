@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Listener.h"
-#include "MessageHandler.h"
+#include "../Core/Listener.h"
+#include "../Core/MessageHandler.h"
 
 class ChatListener: public Listener
 {
