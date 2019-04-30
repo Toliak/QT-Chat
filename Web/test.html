@@ -202,6 +202,19 @@
         document.server.addEventListener("message", Server.onMessage);
         document.server.addEventListener("open", Server.onOpen);
     });
+
+    $(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const address = urlParams.get("address");
+        const name = urlParams.get("name");
+        if (name === null || address === null) {
+            return false;
+        }
+
+        $("#address").val(address);
+        $("#name").val(name);
+        $("#connect").click();
+    });
 </script>
 
 <!--Сюда идут сообщения-->
