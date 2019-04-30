@@ -15,9 +15,9 @@ public:
 
     void giveMessage(const QString &message);
 
-
 signals:
     void onMessage(const QString &type, const QJsonObject &json);
 
 private:
+
 };

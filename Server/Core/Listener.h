@@ -13,23 +13,21 @@ class Listener: public QObject
 Q_OBJECT
 
 public:
-    explicit Listener(QObject *parent = nullptr);
+    explicit Listener(const Config *config, QObject *parent = nullptr);
 
-protected slots:
+protected:
     virtual Client *onConnect();
     virtual void onMessage(const QString &message);
     virtual void onDisconnect();
 
 protected:
-    void sendDataToAll(const QJsonObject &data, const QString &type);
+    void sendDataToAll(const QString &type, const QJsonObject &data);
 
     void removeClient(Client *client)
     {
-        delete client;
         Listener::clients.remove(client->getSocket());
+        delete client;
     }
-
-//    void sendMessage(QWebSocket *socket, const QJsonObject &data, const QString &type = "data") const;
 
     bool isSocketAvailable(QWebSocket *socket)
     {
@@ -41,6 +39,7 @@ protected:
     QHash<QWebSocket *, Client *> clients;      ///< Те, кому будет доставлено сообщение
 
 private:
+    const Config *config;
     QWebSocketServer *websocketServer = nullptr;
 
     void createWebSocketServer();

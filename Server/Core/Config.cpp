@@ -1,7 +1,5 @@
 #include "Config.h"
 
-Config *Config::instance = nullptr;
-
 Config::Config()
 {
     Config::load();

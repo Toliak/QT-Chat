@@ -9,9 +9,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication application(argc, argv);
 
-    auto *config = Config::getConfig();
+    auto *config = new Config();
 
-    auto *listener = new ChatListener();
+    auto *listener = new ChatListener(nullptr, nullptr);
 
     return QCoreApplication::exec();
 }

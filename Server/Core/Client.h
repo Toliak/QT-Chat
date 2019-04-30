@@ -17,7 +17,7 @@ public:
      */
     explicit Client(QWebSocket *socket);
 
-    void sendData(const QJsonObject &data, const QString &type);
+    void sendData(const QString &type, const QJsonObject &data);
 
     QWebSocket *getSocket() const
     {

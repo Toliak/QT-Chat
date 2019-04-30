@@ -4,7 +4,7 @@ Client::Client(QWebSocket *socket)
     : socket(socket), messageHandler(new MessageHandler)
 {}
 
-void Client::sendData(const QJsonObject &data, const QString &type)
+void Client::sendData(const QString &type, const QJsonObject &data)
 {
     QJsonObject json;
     json["type"] = type;

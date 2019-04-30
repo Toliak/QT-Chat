@@ -1,18 +1,16 @@
 #include "Listener.h"
 
-Listener::Listener(QObject *parent)
-    : QObject(parent)
+Listener::Listener(const Config *config, QObject *parent)
+    : config(config), QObject(parent)
 {
     Listener::createWebSocketServer();
 }
 
 void Listener::createWebSocketServer()
 {
-    auto *config = Config::getConfig();
-
     Listener::websocketServer = new QWebSocketServer("Chat", QWebSocketServer::NonSecureMode);
 
-    if (Listener::websocketServer->listen(QHostAddress(config->getIp()), config->getPort())) {
+    if (Listener::websocketServer->listen(QHostAddress(Listener::config->getIp()), Listener::config->getPort())) {
         connect(Listener::websocketServer, &QWebSocketServer::newConnection, this, &Listener::onConnect);
         //TODO: should i connect close signal?
     } else {
@@ -34,7 +32,7 @@ Client *Listener::onConnect()
     qDebug("Connection");
 
     auto client = new Client(socket);
-    clients.insert(socket, client);
+    Listener::clients.insert(socket, client);
 
     return client;
 }
@@ -74,56 +72,9 @@ void Listener::onDisconnect()
     Listener::removeClient(client);
 }
 
-void Listener::sendDataToAll(const QJsonObject &data, const QString &type)
+void Listener::sendDataToAll(const QString &type, const QJsonObject &data)
 {
-    for (Client *client : clients) {
-        client->sendData(data, type);
+    for (Client *client : Listener::clients) {
+        client->sendData(type, data);
     }
 }
-
-/*
-void Listener::sendMessage(QWebSocket *socket, const QJsonObject &data, const QString &type) const
-{
-    QJsonObject json;
-    json["type"] = type;
-    json["data"] = data;
-
-    if (socket) {
-        socket->sendTextMessage(QJsonDocument(json).toJson());
-    } else {
-        for (auto it = Listener::clients.begin(); it != Listener::clients.end(); it++) {
-            it.key()->sendTextMessage(QJsonDocument(json).toJson());
-        }
-    }
-}
-
-
-void Listener::executeMessage(QWebSocket *socket, const QJsonObject &json)
-{
-    if (!json.contains("type")) {
-        return;
-    }
-
-    if (json["type"].toString() == "loginStatus") {
-        if (Listener::clients[socket]->isLogin()) {
-            return;
-        }
-        Listener::clients[socket]->setLogin(true);
-
-        QString name = json["name"].toString();
-        Listener::clients[socket]->setName(name);
-        Listener::sendMessage(nullptr, name, "connect");
-
-        qDebug("Login %s", name.toStdString().c_str());
-    } else if (json["type"].toString() == "message") {
-        QString message = json["message"].toString();
-        sendMessage(nullptr, message);
-
-        qDebug(
-            "Message from %s: %s",
-            Listener::clients[socket]->getName().toStdString().c_str(),
-            message.toStdString().c_str()
-        );
-    }
-}
-*/

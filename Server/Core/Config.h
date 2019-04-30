@@ -7,19 +7,7 @@
 class Config
 {
 public:
-    Config(const Config &) = delete;
-    Config(Config &&) = delete;
-
-    Config &operator=(const Config &) = delete;
-    Config &operator=(Config &&) = delete;
-
-    static Config * getConfig()
-    {
-        if (!Config::instance) {
-            Config::instance = new Config;
-        }
-        return Config::instance;
-    }
+    explicit Config();
 
     const QString &getFilename() const
     {
@@ -45,10 +33,6 @@ private:
     quint16 port = 8880;
     QString ip = "0.0.0.0";
 
-    explicit Config();
-
     void load();
     void save() const;
-
-    static Config *instance;
 };
