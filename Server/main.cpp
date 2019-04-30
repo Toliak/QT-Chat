@@ -2,9 +2,8 @@
 #include <QtWebSockets/QWebSocket>
 #include <QtWebSockets/QWebSocketServer>
 
-#include "Config.h"
-#include "ChatListener.h"
-
+#include "Core/Config.h"
+#include "Chat/ChatListener.h"
 
 int main(int argc, char *argv[])
 {

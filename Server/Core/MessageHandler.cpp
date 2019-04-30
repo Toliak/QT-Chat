@@ -1,7 +1,7 @@
 #include "MessageHandler.h"
 
-MessageHandler::MessageHandler(Client *client, QObject *parent)
-    : QObject(parent), client(client)
+MessageHandler::MessageHandler(QObject *parent)
+    : QObject(parent)
 {}
 
 void MessageHandler::giveMessage(const QString &message)

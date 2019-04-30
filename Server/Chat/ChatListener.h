@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Listener.h"
-#include "MessageHandler.h"
+#include "../Core/Listener.h"
+#include "../Core/MessageHandler.h"
 
 class ChatListener: public Listener
 {
@@ -79,7 +79,7 @@ private slots:
             client->sendData(
                 {
                     {"id", 1},
-                    {"message", "Name is already exists"}
+                    {"text", "Name is already exists"}
                 },
                 "error"
             );
@@ -110,7 +110,7 @@ private slots:
             return;
         }
 
-        QString message = data["message"].toString();
+        QString message = data["text"].toString();
 
         Listener::sendDataToAll(
             {

@@ -1,33 +1,31 @@
-cmake_minimum_required(VERSION 3.14)
 project(bmstu_hw_5_server)
 
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(
         Qt5
+        HINTS "$ENV{QTDIR}"
         REQUIRED COMPONENTS
         Core
         Network
         WebSockets
 )
 
+file(GLOB PROJECT_CORE_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/Core/*.cpp")
+file(GLOB PROJECT_CORE_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Core/*.h")
+file(GLOB PROJECT_CHAT_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/Chat/*.cpp")
+file(GLOB PROJECT_CHAT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Chat/*.h")
+
 add_executable(
         ${PROJECT_NAME}
         main.cpp
-        Config.h
-        Config.cpp
-        Listener.cpp
-        Listener.h
-        Client.cpp
-        Client.h
-        MessageHandler.cpp
-        MessageHandler.h
-        ChatListener.cpp
-        ChatListener.h
+        ${PROJECT_CORE_HEADER}
+        ${PROJECT_CORE_SOURCE}
+        ${PROJECT_CHAT_SOURCE}
+        ${PROJECT_CHAT_HEADER}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTOMOC TRUE)
-set_target_properties(${PROJECT_NAME} PROPERTIES AUTOUIC TRUE)
 set_target_properties(${PROJECT_NAME} PROPERTIES AUTORCC TRUE)
 
 target_link_libraries(
