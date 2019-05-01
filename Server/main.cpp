@@ -1,9 +1,11 @@
 #include <QCoreApplication>
 #include <QtWebSockets/QWebSocket>
 #include <QtWebSockets/QWebSocketServer>
+#include <QResource>
 
 #include "Core/Config.h"
-#include "Chat/ChatListener.h"
+#include "Chat/ChatWebSocketListener.h"
+#include "Chat/StaticHttpListener.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,7 +13,11 @@ int main(int argc, char *argv[])
 
     auto *config = new Config();
 
-    auto *listener = new ChatListener(nullptr, nullptr);
+    auto *listener = new ChatWebSocketListener(config);
+
+    if (config->isHttp()) {
+        auto *httpListener = new StaticHttpListener(new QFile(":/html/chat.html"), config);
+    }
 
     return QCoreApplication::exec();
 }

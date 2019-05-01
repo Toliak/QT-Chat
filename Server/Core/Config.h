@@ -14,9 +14,19 @@ public:
         return Config::filename;
     }
 
-    quint16 getPort() const
+    quint16 getWebSocketPort() const
     {
-        return Config::port;
+        return Config::webSockerPort;
+    }
+
+    bool isHttp() const
+    {
+        return http;
+    }
+
+    quint16 getHttpPort() const
+    {
+        return Config::httpPort;
     }
 
     const QString &getIp() const
@@ -30,7 +40,9 @@ public:
 
 private:
     const QString filename = "config.json";
-    quint16 port = 8880;
+    bool http = false;
+    quint16 httpPort = 8888;
+    quint16 webSockerPort = 8880;
     QString ip = "0.0.0.0";
 
     void load();

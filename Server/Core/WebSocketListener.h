@@ -8,12 +8,12 @@
 #include "Config.h"
 #include "Client.h"
 
-class Listener: public QObject
+class WebSocketListener: public QObject
 {
 Q_OBJECT
 
 public:
-    explicit Listener(const Config *config, QObject *parent = nullptr);
+    explicit WebSocketListener(const Config *config, QObject *parent = nullptr);
 
 protected:
     virtual Client *onConnect();
@@ -25,15 +25,15 @@ protected:
 
     void removeClient(Client *client)
     {
-        Listener::clients.remove(client->getSocket());
+        WebSocketListener::clients.remove(client->getSocket());
         delete client;
     }
 
     bool isSocketAvailable(QWebSocket *socket)
     {
         return socket
-            && Listener::clients.contains(socket)
-            && Listener::clients[socket]->isLogin();
+            && WebSocketListener::clients.contains(socket)
+            && WebSocketListener::clients[socket]->isLogin();
     }
 
     QHash<QWebSocket *, Client *> clients;      ///< Те, кому будет доставлено сообщение

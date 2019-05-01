@@ -1,13 +1,13 @@
-#include "ChatListener.h"
+#include "ChatWebSocketListener.h"
 
-ChatListener::ChatListener(const Config *config, QObject *parent)
-    : Listener(config, parent)
+ChatWebSocketListener::ChatWebSocketListener(const Config *config, QObject *parent)
+    : WebSocketListener(config, parent)
 {
-    registerSlot("login", &::ChatListener::onMessageLogin);
-    registerSlot("message", &::ChatListener::onMessageMessage);
+    registerSlot("login", &::ChatWebSocketListener::onMessageLogin);
+    registerSlot("message", &::ChatWebSocketListener::onMessageMessage);
 }
 
-void ChatListener::onDisconnect()
+void ChatWebSocketListener::onDisconnect()
 {
     auto *socket = qobject_cast<QWebSocket *>(sender());
 
@@ -15,24 +15,24 @@ void ChatListener::onDisconnect()
         return;
     }
 
-    Client *client = Listener::clients[socket];
+    Client *client = WebSocketListener::clients[socket];
     const QString &name = client->getName();
 
-    Listener::sendDataToAll(
+    WebSocketListener::sendDataToAll(
         "message",
         {
             {"type", 2},
             {"name", name},
         });
 
-    Listener::onDisconnect();
+    WebSocketListener::onDisconnect();
 }
 
-Client *ChatListener::onConnect()
+Client *ChatWebSocketListener::onConnect()
 {
-    Client *client = Listener::onConnect();
+    Client *client = WebSocketListener::onConnect();
 
-    for (const auto &registered: ChatListener::registeredSlots) {
+    for (const auto &registered: ChatWebSocketListener::registeredSlots) {
         QString expectedType = registered.first;
         RegisteredSlotType slot = registered.second;
 
@@ -50,17 +50,17 @@ Client *ChatListener::onConnect()
     return client;
 }
 
-void ChatListener::onMessageLogin(Client *client, const QJsonObject &data)
+void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &data)
 {
     QString name = data["name"].toString();
 
     auto isClientExists = std::find_if(
-        Listener::clients.cbegin(),
-        Listener::clients.cend(),
+        WebSocketListener::clients.cbegin(),
+        WebSocketListener::clients.cend(),
         [&name](Client *client) {
             return client->getName() == name;
         }
-    ) != Listener::clients.cend();
+    ) != WebSocketListener::clients.cend();
 
     if (isClientExists) {
         client->sendData(
@@ -70,7 +70,7 @@ void ChatListener::onMessageLogin(Client *client, const QJsonObject &data)
                 {"text", "Name is already exists"}
             });
 
-        Listener::removeClient(client);
+        WebSocketListener::removeClient(client);
     } else {
         client->setName(name);
         client->setLogin(true);
@@ -79,7 +79,7 @@ void ChatListener::onMessageLogin(Client *client, const QJsonObject &data)
             "login",
             {});
 
-        Listener::sendDataToAll(
+        WebSocketListener::sendDataToAll(
             "message",
             {
                 {"type", 1},
@@ -88,7 +88,7 @@ void ChatListener::onMessageLogin(Client *client, const QJsonObject &data)
     }
 }
 
-void ChatListener::onMessageMessage(Client *client, const QJsonObject &data)
+void ChatWebSocketListener::onMessageMessage(Client *client, const QJsonObject &data)
 {
     if (!client->isLogin()) {
         return;
@@ -96,7 +96,7 @@ void ChatListener::onMessageMessage(Client *client, const QJsonObject &data)
 
     QString message = data["text"].toString();
 
-    Listener::sendDataToAll(
+    WebSocketListener::sendDataToAll(
         "message",
         {
             {"type", 0},

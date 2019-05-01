@@ -1,19 +1,19 @@
 #pragma once
 
-#include "../Core/Listener.h"
-#include "../Core/MessageHandler.h"
+#include "Core/WebSocketListener.h"
+#include "Core/MessageHandler.h"
 
-class ChatListener: public Listener
+class ChatWebSocketListener: public WebSocketListener
 {
 Q_OBJECT
 
 public:
-    explicit ChatListener(const Config *config, QObject *parent = nullptr);
+    explicit ChatWebSocketListener(const Config *config, QObject *parent = nullptr);
 
 protected:
-    using RegisteredSlotType = void (ChatListener::*)(Client *client, const QJsonObject &);
+    using RegisteredSlotType = void (ChatWebSocketListener::*)(Client *client, const QJsonObject &);
 
-    using Listener::onMessage;
+    using WebSocketListener::onMessage;
     void onDisconnect() override;
     Client *onConnect() override;
 
