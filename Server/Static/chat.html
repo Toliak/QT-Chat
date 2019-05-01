@@ -203,17 +203,17 @@
         document.server.addEventListener("open", Server.onOpen);
     });
 
-    $(function() {
+    $(function () {
         const urlParams = new URLSearchParams(window.location.search);
         const address = urlParams.get("address");
         const name = urlParams.get("name");
-        if (name === null || address === null) {
-            return false;
-        }
 
         $("#address").val(address);
         $("#name").val(name);
-        $("#connect").click();
+
+        if (name !== null && address !== null) {
+            $("#connect").click();
+        }
     });
 </script>
 
