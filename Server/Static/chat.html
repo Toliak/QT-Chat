@@ -110,7 +110,7 @@
 
 <script>
     class Server {
-        static state = 0;
+        static state;
 
         static onOpen() {
             document.server.send(JSON.stringify({
@@ -182,6 +182,7 @@
                 .removeClass("d-none");
         }
     }
+    Server.state = 0;
 
     $("#connect").on("click", function () {
         let alert = $("#alert-auth");
