@@ -4,10 +4,19 @@
 #include <QFile>
 #include <QJsonDocument>
 
-class Config
+/**
+ * @brief Config class
+ */
+class Config: public QObject
 {
+Q_OBJECT
+
 public:
-    explicit Config();
+    /**
+     * @brief Default constructor
+     * @param name JSON config filename
+     */
+    explicit Config(QString name, QObject *parent = nullptr);
 
     const QString &getFilename() const
     {
@@ -16,17 +25,7 @@ public:
 
     quint16 getWebSocketPort() const
     {
-        return Config::webSockerPort;
-    }
-
-    bool isHttp() const
-    {
-        return http;
-    }
-
-    quint16 getHttpPort() const
-    {
-        return Config::httpPort;
+        return Config::webSocketPort;
     }
 
     const QString &getIp() const
@@ -34,17 +33,30 @@ public:
         return Config::ip;
     }
 
-    void fromJson(const QJsonObject &json);
-
-    QJsonObject toJson() const;
-
 private:
-    const QString filename = "config.json";
-    bool http = false;
-    quint16 httpPort = 8888;
-    quint16 webSockerPort = 8880;
+    QString filename;
+    quint16 webSocketPort = 8880;
     QString ip = "0.0.0.0";
 
+    /**
+     * @brief Reader
+     */
     void load();
+
+    /**
+     * @brief Writer
+     */
     void save() const;
+
+    /**
+     * @brief Exporter to JSON
+     * @return JSON config data
+     */
+    QJsonObject toJson() const;
+
+    /**
+     * @brief Imported from JSON
+     * @param json JSON object with config data
+     */
+    void fromJson(const QJsonObject &json);
 };

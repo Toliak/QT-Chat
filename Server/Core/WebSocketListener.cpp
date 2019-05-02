@@ -1,24 +1,24 @@
 #include "WebSocketListener.h"
 
-WebSocketListener::WebSocketListener(const Config *config, QObject *parent)
-    : config(config),
-      websocketServer(new QWebSocketServer("Chat", QWebSocketServer::NonSecureMode)),
-      QObject(parent)
-{
-    WebSocketListener::createWebSocketServer();
-}
-
-void WebSocketListener::createWebSocketServer()
+void WebSocketListener::start()
 {
     QHostAddress address(WebSocketListener::config->getIp());
     if (WebSocketListener::websocketServer->listen(address, WebSocketListener::config->getWebSocketPort())) {
+        // Add connection event
         connect(
             WebSocketListener::websocketServer,
             &QWebSocketServer::newConnection,
             this,
             &WebSocketListener::onConnect
         );
-        //TODO: should i connect close signal?
+
+        // Add close event
+        connect(
+            WebSocketListener::websocketServer,
+            &QWebSocketServer::closed,
+            this,
+            &QObject::deleteLater
+        );
     } else {
         qFatal("Cannot start listener");
     }
@@ -26,18 +26,19 @@ void WebSocketListener::createWebSocketServer()
 
 Client *WebSocketListener::onConnect()
 {
-    QWebSocket *socket = WebSocketListener::websocketServer->nextPendingConnection();
-
+    QWebSocket *socket = WebSocketListener::websocketServer->nextPendingConnection();   ///< Connection
     if (!socket) {
         return nullptr;
     }
 
+    // Add events
     connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketListener::onMessage);
     connect(socket, &QWebSocket::disconnected, this, &WebSocketListener::onDisconnect);
 
     qDebug("Connection");
 
-    auto client = new Client(socket);
+    // Create and register client
+    auto client = new Client(socket);       ///< Client object
     WebSocketListener::clients.insert(socket, client);
 
     return client;
@@ -45,8 +46,7 @@ Client *WebSocketListener::onConnect()
 
 void WebSocketListener::onMessage(const QString &message)
 {
-    auto *socket = qobject_cast<QWebSocket *>(sender());
-
+    auto *socket = qobject_cast<QWebSocket *>(sender());            ///< Connection
     if (!socket || !WebSocketListener::clients.contains(socket)) {
         return;
     }
@@ -61,8 +61,7 @@ void WebSocketListener::onMessage(const QString &message)
 
 void WebSocketListener::onDisconnect()
 {
-    auto *socket = qobject_cast<QWebSocket *>(sender());
-
+    auto *socket = qobject_cast<QWebSocket *>(sender());            ///< Connection
     if (!isSocketAvailable(socket)) {
         return;
     }

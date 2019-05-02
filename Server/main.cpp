@@ -5,19 +5,15 @@
 
 #include "Core/Config.h"
 #include "Chat/ChatWebSocketListener.h"
-#include "Chat/StaticHttpListener.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication application(argc, argv);
 
-    auto *config = new Config();
+    auto *config = new Config("server.json");
 
     auto *listener = new ChatWebSocketListener(config);
-
-    if (config->isHttp()) {
-        auto *httpListener = new StaticHttpListener(new QFile(":/html/chat.html"), config);
-    }
+    listener->start();
 
     return QCoreApplication::exec();
 }

@@ -1,3 +1,5 @@
+#include <QJsonArray>
+
 #include "ChatWebSocketListener.h"
 
 ChatWebSocketListener::ChatWebSocketListener(const Config *config, QObject *parent)
@@ -21,9 +23,10 @@ void ChatWebSocketListener::onDisconnect()
     WebSocketListener::sendDataToAll(
         "message",
         {
-            {"type", 2},
+            {"type", ChatWebSocketListener::MessageDisconnect},
             {"name", name},
-        });
+        }
+    );
 
     WebSocketListener::onDisconnect();
 }
@@ -50,9 +53,42 @@ Client *ChatWebSocketListener::onConnect()
     return client;
 }
 
+QStringList ChatWebSocketListener::getAvailableClientNames() const
+{
+    QStringList names;
+    for (Client *client : WebSocketListener::clients) {
+        if (client->isLogin()) {
+            names.push_back(client->getName());
+        }
+    }
+    return names;
+}
+
+void ChatWebSocketListener::sendError(Client *client, qint64 errorId, const QString &errorText, bool disconnect)
+{
+    client->sendData(
+        "error",
+        {
+            {"id", errorId},
+            {"text", "errorText"},
+        }
+    );
+
+    if (disconnect) {
+        WebSocketListener::removeClient(client);
+    }
+}
+
 void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &data)
 {
-    QString name = data["name"].toString();
+    QString name = data["name"].toString();     ///< Client name
+    if (!ChatWebSocketListener::checkName(name)) {                     // Name is incorrect
+        return ChatWebSocketListener::sendError(
+            client,
+            ChatWebSocketListener::ErrorNameIncorrect,
+            "Name size must be between 1 and 16. Name can contain only A-Z, a-z, 0-9 and _"
+        );
+    }
 
     auto isClientExists = std::find_if(
         WebSocketListener::clients.cbegin(),
@@ -63,28 +99,48 @@ void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &da
     ) != WebSocketListener::clients.cend();
 
     if (isClientExists) {
-        client->sendData(
-            "error",
-            {
-                {"id", 1},
-                {"text", "Name is already exists"}
-            });
-
-        WebSocketListener::removeClient(client);
+        return ChatWebSocketListener::sendError(
+            client,
+            ChatWebSocketListener::ErrorClientExists,
+            "Client with this name is already exists"
+        );
     } else {
+        // Setup client
         client->setName(name);
         client->setLogin(true);
 
+        // Successful login
         client->sendData(
             "login",
-            {});
+            {}
+        );
+
+        QJsonArray availableNames;
+        QStringList availableNamesList = ChatWebSocketListener::getAvailableClientNames();
+        std::transform(
+            availableNamesList.cbegin(),
+            availableNamesList.cend(),
+            std::back_inserter(availableNames),
+            [](auto input) {
+                return input;
+            }
+        );
+
+        client->sendData(
+            "message",
+            {
+                {"type", ChatWebSocketListener::MessageAvailable},
+                {"data", availableNames}
+            }
+        );
 
         WebSocketListener::sendDataToAll(
             "message",
             {
-                {"type", 1},
+                {"type", ChatWebSocketListener::MessageConnect},
                 {"name", name},
-            });
+            }
+        );
     }
 }
 
@@ -95,11 +151,19 @@ void ChatWebSocketListener::onMessageMessage(Client *client, const QJsonObject &
     }
 
     QString message = data["text"].toString();
+    if (!ChatWebSocketListener::checkMessage(message)) {
+        return ChatWebSocketListener::sendError(
+            client,
+            ChatWebSocketListener::ErrorMessageIncorrect,
+            "Message size must be between 1 and 64",
+            false
+        );
+    }
 
     WebSocketListener::sendDataToAll(
         "message",
         {
-            {"type", 0},
+            {"type", ChatWebSocketListener::MessageDefault},
             {"name", client->getName()},
             {"text", message},
         });

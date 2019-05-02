@@ -8,15 +8,22 @@
 /**
  * @brief Basic client class
  */
-struct Client
+struct Client: public QObject
 {
+Q_OBJECT
+
 public:
     /**
      * @brief Basic constructor from WS connection
      * @param socket Connection
      */
-    explicit Client(QWebSocket *socket);
+    explicit Client(QWebSocket *socket, QObject *parent = nullptr);
 
+    /**
+     * @brief Sends data to client
+     * @param type String type of sending data
+     * @param data Sending data
+     */
     void sendData(const QString &type, const QJsonObject &data);
 
     QWebSocket *getSocket() const
@@ -49,7 +56,7 @@ public:
         Client::loginStatus = login;
     }
 
-    virtual ~Client()
+    ~Client() override
     {
         delete Client::messageHandler;
     }
