@@ -70,7 +70,7 @@ void ChatWebSocketListener::sendError(Client *client, qint64 errorId, const QStr
         "error",
         {
             {"id", errorId},
-            {"text", "errorText"},
+            {"text", errorText},
         }
     );
 
@@ -130,7 +130,7 @@ void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &da
             "message",
             {
                 {"type", ChatWebSocketListener::MessageAvailable},
-                {"data", availableNames}
+                {"names", availableNames}
             }
         );
 

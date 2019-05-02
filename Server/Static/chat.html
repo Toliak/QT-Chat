@@ -110,8 +110,6 @@
 
 <script>
     class Server {
-        static state;
-
         static onOpen() {
             document.server.send(JSON.stringify({
                 "type": "login",
@@ -130,12 +128,11 @@
             "error": function (info) {
                 if (Server.state === 0) {
                     $("#alert-auth")
-                        .text(info.message)
+                        .text(info.text)
                         .removeClass("d-none");
                 }
             },
             "message": function (info) {
-                console.log(info);
                 let message = null;
 
                 if (info.type === 0) {
@@ -149,6 +146,16 @@
                 } else if (info.type === 2) {
                     message = $(
                         `<div class="row"><div class="col-12">${info.name} отключился</div></div>`
+                    );
+                } else if (info.type === 3) {
+                    let names = "";
+                    for (let i = 0; i < info.names.length; i++) {
+                        names += info.names[i] + ", ";
+                    }
+                    names = names.slice(0, name.length - 2);
+
+                    message = $(
+                        `<div class="row"><div class="col-12">${names} онлайн</div></div>`
                     );
                 }
 
