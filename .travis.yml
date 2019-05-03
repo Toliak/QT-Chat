@@ -1,0 +1,27 @@
+language: cpp
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: true
+      compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-8
+            - g++-8
+            - qtdeclarative5-dev
+            - libqt5websockets5-dev
+            - cmake
+
+script:
+  - sudo ln -s /usr/bin/gcc-8 /usr/local/bin/gcc
+  - sudo ln -s /usr/bin/g++-8 /usr/local/bin/g++
+  - mkdir -p cmake-build-debug
+  - cd cmake-build-debug
+  - cmake --version
+  - cmake ..
+  - cmake --build .
