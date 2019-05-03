@@ -115,22 +115,13 @@ void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &da
             {}
         );
 
-        QJsonArray availableNames;
         QStringList availableNamesList = ChatWebSocketListener::getAvailableClientNames();
-        std::transform(
-            availableNamesList.cbegin(),
-            availableNamesList.cend(),
-            std::back_inserter(availableNames),
-            [](auto input) {
-                return input;
-            }
-        );
 
         client->sendData(
             "message",
             {
                 {"type", ChatWebSocketListener::MessageAvailable},
-                {"names", availableNames}
+                {"names", QJsonArray::fromStringList(availableNamesList)}
             }
         );
 

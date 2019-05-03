@@ -59,6 +59,10 @@
         ::-webkit-scrollbar-corner {
             background: transparent;
         }
+
+        #container-message * {
+            word-break: break-word;
+        }
     </style>
 </head>
 <body class="p-3" style="overflow: hidden;height: 100vh; width: 100vw;">
@@ -119,52 +123,6 @@
             }))
         }
 
-        static messageHandler = {
-            "login": function (info) {
-                Server.state = 1;
-
-                $('#modal-auth').modal('hide')
-            },
-            "error": function (info) {
-                if (Server.state === 0) {
-                    $("#alert-auth")
-                        .text(info.text)
-                        .removeClass("d-none");
-                }
-            },
-            "message": function (info) {
-                let message = null;
-
-                if (info.type === 0) {
-                    message = $(
-                        `<div class="row"><div class="col-3">${info.name}</div><div class="col-9">${info.text}</div></div>`
-                    );
-                } else if (info.type === 1) {
-                    message = $(
-                        `<div class="row"><div class="col-12">${info.name} присоединился</div></div>`
-                    );
-                } else if (info.type === 2) {
-                    message = $(
-                        `<div class="row"><div class="col-12">${info.name} отключился</div></div>`
-                    );
-                } else if (info.type === 3) {
-                    let names = "";
-                    for (let i = 0; i < info.names.length; i++) {
-                        names += info.names[i] + ", ";
-                    }
-                    names = names.slice(0, name.length - 2);
-
-                    message = $(
-                        `<div class="row"><div class="col-12">${names} онлайн</div></div>`
-                    );
-                }
-
-                let container = $("#container-message");
-                container.append(message);
-                container.scrollTop(10 ** 10);
-            }
-        };
-
         static onMessage(event) {
             let object = JSON.parse(event.data);
             let f = Server.messageHandler[object.type];
@@ -189,7 +147,54 @@
                 .removeClass("d-none");
         }
     }
+
     Server.state = 0;
+
+    Server.messageHandler = {
+        "login": function (info) {
+            Server.state = 1;
+
+            $('#modal-auth').modal('hide')
+        },
+        "error": function (info) {
+            if (Server.state === 0) {
+                $("#alert-auth")
+                    .text(info.text)
+                    .removeClass("d-none");
+            }
+        },
+        "message": function (info) {
+            let message = null;
+
+            if (info.type === 0) {
+                message = $(
+                    `<div class="row"><div class="col-3">${info.name}</div><div class="col-9">${info.text}</div></div>`
+                );
+            } else if (info.type === 1) {
+                message = $(
+                    `<div class="row"><div class="col-12">${info.name} присоединился</div></div>`
+                );
+            } else if (info.type === 2) {
+                message = $(
+                    `<div class="row"><div class="col-12">${info.name} отключился</div></div>`
+                );
+            } else if (info.type === 3) {
+                let names = "";
+                for (let i = 0; i < info.names.length; i++) {
+                    names += info.names[i] + ", ";
+                }
+                names = names.slice(0, name.length - 2);
+
+                message = $(
+                    `<div class="row"><div class="col-12">${names} онлайн</div></div>`
+                );
+            }
+
+            let container = $("#container-message");
+            container.append(message);
+            container.scrollTop(10 ** 10);
+        }
+    };
 
     $("#connect").on("click", function () {
         let alert = $("#alert-auth");
