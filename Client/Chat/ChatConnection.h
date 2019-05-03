@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QObject>
-#include <QJsonDocument>
 #include <QJsonObject>
 
 #include "Core/Connection.h"

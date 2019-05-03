@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QLabel>
 
 namespace Ui
 {
@@ -29,7 +28,7 @@ public:
      * @brief Inserts message to UI
      * @param message String message
      */
-    void insertMessage(const QString &message);
+    void insertMessage(const QString &message) const;
 
 private slots:
     void on_send_clicked();

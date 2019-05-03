@@ -1,8 +1,5 @@
-#include <utility>
-
 #pragma once
 
-#include <QString>
 #include <QtWebSockets/QWebSocket>
 
 /**

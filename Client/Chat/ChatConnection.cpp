@@ -1,3 +1,5 @@
+#include <QJsonDocument>
+
 #include "ChatConnection.h"
 
 void ChatConnection::start(const QJsonObject &loginData)

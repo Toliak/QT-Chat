@@ -15,6 +15,8 @@ Q_OBJECT
 
 public:
     explicit AuthDialog(QWidget *parent = nullptr);
+    Q_DISABLE_COPY(AuthDialog);
+    
     ~AuthDialog() override;
 
 public slots:
@@ -24,7 +26,7 @@ private:
     void onTextChanged(const QString &);
 
     void onSuccess(ChatConnection *connection);
-    void onFail(const QString &reason);
+    void onFail(const QString &reason) const;
 
     Ui::AuthDialog *ui;
 };

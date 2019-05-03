@@ -1,8 +1,5 @@
 #include <QIcon>
 #include <QPushButton>
-#include <QDialogButtonBox>
-#include <QJsonDocument>
-#include <QJsonObject>
 
 #include "AuthDialog.h"
 #include "ui_AuthDialog.h"
@@ -65,7 +62,7 @@ void AuthDialog::onSuccess(ChatConnection *connection)
     QDialog::accept();
 }
 
-void AuthDialog::onFail(const QString &reason)
+void AuthDialog::onFail(const QString &reason) const
 {
     auto error = this->findChild<QLabel *>("error");
     error->setText("Failed: " + reason);
