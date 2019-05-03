@@ -16,7 +16,7 @@ void Connection::start()
 
     connect(
         Connection::socket,
-        QOverload<QAbstractSocket::SocketError>::of(&QWebSocket::error),
+        static_cast<void (QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
         [this]() {
             emit Connection::error(Connection::socket->errorString());
         }

@@ -42,6 +42,8 @@ public:
         return (
             (c >= 'a' && c <= 'z')
                 || (c >= 'A' && c <= 'Z')
+                || (c >= L'а' && c <= L'я')
+                || (c >= L'А' && c <= L'Я')
                 || (c >= '0' && c <= '9')
                 || (c == '_' || c == '-')
         );
@@ -54,7 +56,7 @@ public:
      */
     static bool checkName(const QString &name)
     {
-        if (name.size() > 16) {
+        if (name.size() > 24) {
             return false;
         } else if (name.isEmpty()) {
             return false;

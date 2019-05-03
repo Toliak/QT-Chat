@@ -2,7 +2,6 @@
 #include <QtWebSockets/QWebSocket>
 #include <QPlainTextEdit>
 #include <QJsonArray>
-#include <QTextBrowser>
 #include <QScrollBar>
 
 #include "Chat/ChatConnection.h"
@@ -29,7 +28,7 @@ ChatWindow::~ChatWindow()
     delete ui;
 }
 
-void ChatWindow::insertMessage(const QString &message)
+void ChatWindow::insertMessage(const QString &message) const
 {
     static const QString tagBegin = "<p style=\"margin-top:0px; margin-bottom:0px; margin-left:0px;"
                                     "margin-right:0px; -qt-block-indent:0; text-indent:0px;\">";
