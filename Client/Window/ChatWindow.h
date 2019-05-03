@@ -3,8 +3,6 @@
 #include <QMainWindow>
 #include <QLabel>
 
-#include "ChatLabel.h"
-
 namespace Ui
 {
 class ChatWindow;
@@ -28,15 +26,10 @@ public:
     ~ChatWindow() override;
 
     /**
-     * @brief Create label with message
-     * @param text Message
-     * @warning You must delete return object to prevent memory leak
-     * @return Label pointer
+     * @brief Inserts message to UI
+     * @param message String message
      */
-    static ChatLabel *createMessageLabel(const QString &text);
-
-protected:
-    void resizeEvent(QResizeEvent* event) override;
+    void insertMessage(const QString &message);
 
 private slots:
     void on_send_clicked();

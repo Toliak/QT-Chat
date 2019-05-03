@@ -2,6 +2,8 @@
 #include <QtWebSockets/QWebSocket>
 #include <QPlainTextEdit>
 #include <QJsonArray>
+#include <QTextBrowser>
+#include <QScrollBar>
 
 #include "Chat/ChatConnection.h"
 #include "ChatWindow.h"
@@ -17,13 +19,43 @@ ChatWindow::ChatWindow(ChatConnection *connection, QWidget *parent)
     connect(connection, &ChatConnection::chatMessage, this, &ChatWindow::onChatMessage);
     connect(connection, &ChatConnection::errorMessage, this, &ChatWindow::onErrorMessage);
 
-    this->findChild<QPushButton *>("send")->setEnabled(false);
-    this->findChild<QLineEdit *>("message")->setFocus();
+    QWidget::findChild<QPushButton *>("send")->setEnabled(false);
+    QWidget::findChild<QLineEdit *>("message")->setFocus();
+    QWidget::findChild<QTextBrowser *>("messages")->clear();
 }
 
 ChatWindow::~ChatWindow()
 {
     delete ui;
+}
+
+void ChatWindow::insertMessage(const QString &message)
+{
+    static const QString tagBegin = "<p style=\"margin-top:0px; margin-bottom:0px; margin-left:0px;"
+                                    "margin-right:0px; -qt-block-indent:0; text-indent:0px;\">";
+    static const QString tagEnd = "</p>";
+
+    auto *browser = QWidget::findChild<QTextBrowser *>("messages");     ///< Messages
+    if (browser->toPlainText().isEmpty()) {
+        // Replace all html code, if there are nothing
+        browser->setHtml(
+            tagBegin + message + tagEnd
+        );
+    } else {
+        // Append html
+        QString html = browser->toHtml();           ///< Messages html
+        int endIndex = html.indexOf("</body>");
+        html.insert(
+            endIndex,
+            tagBegin + message + tagEnd
+        );
+        browser->setHtml(html);
+    }
+
+    // Scroll to bottom
+    browser->verticalScrollBar()->setValue(
+        browser->verticalScrollBar()->maximum()
+    );
 }
 
 void ChatWindow::onChatMessage(const QJsonObject &data)
@@ -50,21 +82,14 @@ void ChatWindow::onChatMessage(const QJsonObject &data)
         text = "Wrong message type";
     }
 
-    auto *area = this->findChild<QWidget *>("messageArea");
-    area->layout()->addWidget(
-        createMessageLabel(text)
-    );
+    ChatWindow::insertMessage(text);
 }
 
 void ChatWindow::onErrorMessage(const QJsonObject &data)
 {
-    QString text = "Error: " + data["text"].toString();
+    QString text = "<a style=\"color: #f00\">Error: " + data["text"].toString() + "</a>";
 
-    QLabel *label = createMessageLabel(text);
-    label->setStyleSheet(".QLabel {color: rgb(255, 0, 0)}");
-
-    auto *area = this->findChild<QWidget *>("messageArea");
-    area->layout()->addWidget(label);
+    ChatWindow::insertMessage(text);
 }
 
 void ChatWindow::on_send_clicked()
@@ -81,25 +106,6 @@ void ChatWindow::on_send_clicked()
     ChatWindow::connection->sendMessage(message);
 }
 
-ChatLabel *ChatWindow::createMessageLabel(const QString &text)
-{
-    auto *label = new ChatLabel(text);     ///< Result Label
-
-    // Set vertical size to minimum
-//    QSizePolicy sizePolicy = label->sizePolicy();
-//    sizePolicy.setVerticalPolicy(QSizePolicy::Maximum);
-//    label->setSizePolicy(sizePolicy);
-
-    // Now text can be selected
-    label->setTextInteractionFlags(Qt::TextSelectableByMouse);
-
-    // Wrapping by splitter
-    label->setWordWrap(true);
-
-    label->show();
-    return label;
-}
-
 void ChatWindow::on_message_returnPressed()
 {
     this->findChild<QPushButton *>("send")->animateClick();
@@ -108,15 +114,4 @@ void ChatWindow::on_message_returnPressed()
 void ChatWindow::on_message_textChanged(const QString &text)
 {
     this->findChild<QPushButton *>("send")->setEnabled(!text.isEmpty());
-}
-
-void ChatWindow::resizeEvent(QResizeEvent *event)
-{
-    QMainWindow::resizeEvent(event);
-
-    // Wrap all labels
-    QList<ChatLabel *> list = this->findChild<QWidget *>("messageArea")->findChildren<ChatLabel *>();
-    for (ChatLabel *label : list) {
-        label->fullWrap();
-    }
 }
