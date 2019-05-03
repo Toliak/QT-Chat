@@ -23,9 +23,16 @@ file(GLOB PROJECT_WINDOW_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/Window/*.h")
 file(GLOB PROJECT_WINDOW_UI "${CMAKE_CURRENT_SOURCE_DIR}/Window/*.ui")
 file(GLOB PROJECT_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/Static/*.qrc")
 
+set(GUI_TYPE)
+if (WIN32)
+	set(GUI_TYPE WIN32)
+else ()
+	set(GUI_TYPE)
+endif ()
+
 add_executable(
         ${PROJECT_NAME}
-        main.cpp
+        ${GUI_TYPE} main.cpp
         ${PROJECT_CHAT_SOURCE}
         ${PROJECT_CHAT_HEADER}
         ${PROJECT_CORE_SOURCE}
