@@ -25,9 +25,9 @@ file(GLOB PROJECT_STATIC "${CMAKE_CURRENT_SOURCE_DIR}/Static/*.qrc")
 
 set(GUI_TYPE)
 if (WIN32)
-	set(GUI_TYPE WIN32)
+    set(GUI_TYPE WIN32)
 else ()
-	set(GUI_TYPE)
+    set(GUI_TYPE)
 endif ()
 
 add_executable(

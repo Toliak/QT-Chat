@@ -18,9 +18,7 @@ void ChatConnection::start(const QJsonObject &loginData)
     });
 
     connect(this, &Connection::disconnected, [this]() {
-        if (ChatConnection::status == 0) {
-            emit ChatConnection::fail("Disconnected");
-        } else if (ChatConnection::status == 1) {
+        if (ChatConnection::status == 1) {
             emit ChatConnection::errorMessage({
                                                   {"text", "Disconnected"}
                                               });

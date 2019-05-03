@@ -86,7 +86,7 @@ void ChatWebSocketListener::onMessageLogin(Client *client, const QJsonObject &da
         return ChatWebSocketListener::sendError(
             client,
             ChatWebSocketListener::ErrorNameIncorrect,
-            "Name size must be between 1 and 16. Name can contain only A-Z, a-z, 0-9 and _"
+            "Name size must be between 1 and 24. Name can contain only latin and cyrillic letters, 0-9, _ and -"
         );
     }
 
