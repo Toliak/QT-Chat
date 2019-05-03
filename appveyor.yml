@@ -35,6 +35,6 @@ before_build:
       cmake --version
       cmake .. -G %generator%
 build:
-  project: c:\projects\cmake-init\build\bmstu_hw_4.sln
+  project: c:\projects\cmake-init\build\bmstu_hw_5.sln
   verbosity: minimal
   parallel: true
