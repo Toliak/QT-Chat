@@ -29,6 +29,7 @@ init:
 
 before_build:
   - cmd: |-
+      set PATH=%PATH%;C:\Qt\5.12.2\msvc2017_64;C:\Qt\5.12.2\msvc2017_64\bin
       mkdir build
       cd build
       cmake --version
