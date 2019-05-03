@@ -41,18 +41,20 @@ void AuthDialog::accept()
     auto *name = this->findChild<QLineEdit *>("name");
 
     auto *connection = new ChatConnection(
-        address->text(),
-        QJsonObject{
-            {"name", name->text()},
-        }
+        address->text()
     );
 
     connect(connection, &ChatConnection::login, [this, connection]() {
         AuthDialog::onSuccess(connection);
     });
     connect(connection, &ChatConnection::fail, this, &AuthDialog::onFail);
+    connect(connection, &ChatConnection::fail, connection, &QObject::deleteLater);
 
-    connection->start();
+    connection->start(
+        QJsonObject{
+            {"name", name->text()},
+        }
+    );
 }
 
 void AuthDialog::onSuccess(ChatConnection *connection)
@@ -63,10 +65,10 @@ void AuthDialog::onSuccess(ChatConnection *connection)
     QDialog::accept();
 }
 
-void AuthDialog::onFail()
+void AuthDialog::onFail(const QString &reason)
 {
     auto error = this->findChild<QLabel *>("error");
-    error->setText("Failed to login or connect");
+    error->setText("Failed: " + reason);
     error->show();
 
     auto *buttonBox = this->findChild<QDialogButtonBox *>("buttonBox");
@@ -77,7 +79,7 @@ void AuthDialog::onTextChanged(const QString &)
 {
     bool state =
         !(this->findChild<QLineEdit *>("address")->text().isEmpty()
-        || this->findChild<QLineEdit *>("name")->text().isEmpty());
+            || this->findChild<QLineEdit *>("name")->text().isEmpty());
 
     this->findChild<QDialogButtonBox *>("buttonBox")->button(QDialogButtonBox::Ok)->setEnabled(state);
 }
