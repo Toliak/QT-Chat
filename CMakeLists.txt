@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.4)
 project(bmstu_hw_5)
 
 add_subdirectory(Server)
