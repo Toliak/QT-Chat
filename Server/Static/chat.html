@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -125,7 +125,7 @@
                 "data": {
                     "name": $("#name").val(),
                 }
-            }))
+            }));
         }
 
         static onMessage(event) {
@@ -159,7 +159,7 @@
         "login": function (info) {
             Server.state = 1;
 
-            $('#modal-auth').modal('hide')
+            $("#modal-auth").modal('hide');
         },
         "error": function (info) {
             if (Server.state === 0) {
@@ -217,7 +217,7 @@
 
         try {
             document.server = new WebSocket($("#address").val());
-        } catch {
+        } catch (e) {
             alert
                 .text("Wrong connection address")
                 .removeClass("d-none");
@@ -258,7 +258,7 @@
             <input type="text" class="form-control" id="message" placeholder="Enter message">
         </div>
         <div class="col-3">
-            <div class="btn btn-primary btn-block" id="send">Send</div>
+            <button class="btn btn-primary btn-block" id="send" disabled>Send</button>
         </div>
     </div>
 
@@ -267,13 +267,24 @@
 <script>
     $("#message").on("keypress", function (event) {
         if (event.which === 13) {
-            $("#send").click();
+            $("#send").trigger("click");
+        }
+    });
+
+    $("#message").on("input", function (event) {
+        if ($(this).val().length !== 0) {
+            $("#send").removeAttr("disabled");
+        } else {
+            $("#send").attr("disabled", "");
         }
     });
 
     $("#send").on("click", function () {
-        let message = $("#message");
+        if ($("#send").attr("disabled")) {
+            return false;
+        }
 
+        let message = $("#message");
         document.server.send(JSON.stringify({
             "type": "message",
             "data": {
@@ -282,8 +293,8 @@
         }));
 
         message.val("");
-    })
-    ;
+        $("#message").trigger("input");
+    });
 </script>
 
 </body>
