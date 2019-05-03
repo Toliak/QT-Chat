@@ -166,9 +166,19 @@
                 $("#alert-auth")
                     .text(info.text)
                     .removeClass("d-none");
+            } else if (Server.state === 1) {
+                let container = $("#container-message");
+                container.append(
+                    `<div class="row"><div class="col-12 text-danger">Ошибка: ${info.text}</div></div>`
+                );
+                container.scrollTop(10 ** 10);
             }
         },
         "message": function (info) {
+            if (Server.state !== 1) {
+                return false;
+            }
+
             let message = null;
 
             if (info.type === 0) {
