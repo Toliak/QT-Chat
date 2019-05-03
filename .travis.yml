@@ -13,6 +13,8 @@ matrix:
           packages:
             - gcc-8
             - g++-8
+            - qtdeclarative5-dev
+            - libqt5websockets5-dev
             - cmake
 
 script:
@@ -21,5 +23,5 @@ script:
   - mkdir -p cmake-build-debug
   - cd cmake-build-debug
   - cmake --version
-  - cmake ../
+  - cmake ..
   - cmake --build .
