@@ -68,11 +68,11 @@ public:
     /**
      * @brief Checks message
      * @param message Message string
-     * @return true, if message size is between 0 and 64
+     * @return true, if message size is between 0 and 1024
      */
     static bool checkMessage(const QString &message)
     {
-        if (message.size() > 64) {
+        if (message.size() > 1024) {
             return false;
         } else if (message.isEmpty()) {
             return false;

@@ -146,7 +146,7 @@ void ChatWebSocketListener::onMessageMessage(Client *client, const QJsonObject &
         return ChatWebSocketListener::sendError(
             client,
             ChatWebSocketListener::ErrorMessageIncorrect,
-            "Message size must be between 1 and 64",
+            "Message size must be between 1 and 1024",
             false
         );
     }
