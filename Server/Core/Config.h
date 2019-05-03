@@ -4,31 +4,28 @@
 #include <QFile>
 #include <QJsonDocument>
 
-class Config
+/**
+ * @brief Config class
+ */
+class Config: public QObject
 {
+Q_OBJECT
+
 public:
-    Config(const Config &) = delete;
-    Config(Config &&) = delete;
-
-    Config &operator=(const Config &) = delete;
-    Config &operator=(Config &&) = delete;
-
-    static Config * getConfig()
-    {
-        if (!Config::instance) {
-            Config::instance = new Config;
-        }
-        return Config::instance;
-    }
+    /**
+     * @brief Default constructor
+     * @param name JSON config filename
+     */
+    explicit Config(QString name, QObject *parent = nullptr);
 
     const QString &getFilename() const
     {
         return Config::filename;
     }
 
-    quint16 getPort() const
+    quint16 getWebSocketPort() const
     {
-        return Config::port;
+        return Config::webSocketPort;
     }
 
     const QString &getIp() const
@@ -36,19 +33,30 @@ public:
         return Config::ip;
     }
 
-    void fromJson(const QJsonObject &json);
-
-    QJsonObject toJson() const;
-
 private:
-    const QString filename = "config.json";
-    quint16 port = 8880;
+    QString filename;
+    quint16 webSocketPort = 8880;
     QString ip = "0.0.0.0";
 
-    explicit Config();
-
+    /**
+     * @brief Reader
+     */
     void load();
+
+    /**
+     * @brief Writer
+     */
     void save() const;
 
-    static Config *instance;
+    /**
+     * @brief Exporter to JSON
+     * @return JSON config data
+     */
+    QJsonObject toJson() const;
+
+    /**
+     * @brief Imported from JSON
+     * @param json JSON object with config data
+     */
+    void fromJson(const QJsonObject &json);
 };

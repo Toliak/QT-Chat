@@ -1,31 +1,31 @@
 #include "Config.h"
 
-Config *Config::instance = nullptr;
-
-Config::Config()
+Config::Config(QString name, QObject *parent)
+    : filename(std::move(name)), QObject(parent)
 {
     Config::load();
-}
-
-void Config::fromJson(const QJsonObject &json)
-{
-    Config::port = json["port"].toInt();
-    Config::ip = json["ip"].toString();
 }
 
 QJsonObject Config::toJson() const
 {
     QJsonObject json;
-    json["port"] = Config::port;
+    json["webSocketPort"] = Config::webSocketPort;
     json["ip"] = Config::ip;
 
     return json;
+}
+
+void Config::fromJson(const QJsonObject &json)
+{
+    Config::webSocketPort = json["webSocketPort"].toInt();
+    Config::ip = json["ip"].toString();
 }
 
 void Config::load()
 {
     QFile loadFile(filename);
 
+    // If file cannot been opened - create it
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open config file. Generating new...");
         Config::save();
@@ -46,6 +46,7 @@ void Config::save() const
         return;
     }
 
+    // Saves default config
     QJsonDocument saveDocument(Config::toJson());
     saveFile.write(saveDocument.toJson());
 }

@@ -24,7 +24,7 @@ private:
     void onTextChanged(const QString &);
 
     void onSuccess(ChatConnection *connection);
-    void onFail();
+    void onFail(const QString &reason);
 
     Ui::AuthDialog *ui;
 };

@@ -11,62 +11,38 @@ class ChatConnection: public Connection
 Q_OBJECT
 
 public:
-    ChatConnection(const QString &urlString, const QJsonObject &loginData, QObject *parent = nullptr)
+    /**
+     * @brief Connection constructor
+     * @param urlString Websocket server address
+     * @param loginData Auth information
+     * @param parent QT parent
+     */
+    explicit ChatConnection(const QString &urlString, QObject *parent = nullptr)
         : Connection(urlString, parent)
-    {
-        connect(this, &Connection::connected, [this, loginData]() {
-            connect(this, &Connection::message, this, &ChatConnection::onMessage);
+    {}
 
-            Connection::send(
-                QJsonDocument(
-                    QJsonObject{
-                        {"type", "login"},
-                        {"data", loginData},
-                    }
-                ).toJson()
-            );
-        });
-        connect(this, &Connection::disconnected, [this]() {
-            emit ChatConnection::fail();
-        });
-    }
+    /**
+     * @brief Opens websocket connection
+     * @param loginData Auto information
+     */
+    void start(const QJsonObject &loginData);
 
-    void sendMessage(const QString &text)
-    {
-        QJsonObject json{
-            {"type", "message"},
-            {"data", QJsonObject{
-                {"text", text}
-            }}
-        };
-
-        Connection::send(QJsonDocument(json).toJson());
-    }
+    void sendMessage(const QString &text);
 
 signals:
     void chatMessage(const QJsonObject &data);
+    void errorMessage(const QJsonObject &data);
     void login();
-    void fail();
+    void fail(const QString &reason);
 
 private:
-    void onMessage(const QString &message)
-    {
-        QJsonObject json = QJsonDocument::fromJson(message.toUtf8()).object();
+    /**
+     * @brief Processes message
+     * @param message Message
+     */
+    void onMessage(const QString &message);
 
-        if (ChatConnection::status == 0) {
-            if (json["type"].toString() == "login") {
-                ChatConnection::status = 1;
-                emit ChatConnection::login();
-            } else {
-                ChatConnection::status = -1;
-                emit ChatConnection::fail();
-            }
-        } else if (ChatConnection::status == 1) {
-            if (json["type"].toString() == "message") {
-                emit ChatConnection::chatMessage(json["data"].toObject());
-            }
-        }
-    };
+    using Connection::start;    // Remove parent method
 
     quint8 status = 0;
 

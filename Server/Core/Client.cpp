@@ -1,10 +1,10 @@
 #include "Client.h"
 
-Client::Client(QWebSocket *socket)
-    : socket(socket), messageHandler(new MessageHandler)
+Client::Client(QWebSocket *socket, QObject *parent)
+    : socket(socket), messageHandler(new MessageHandler), QObject(parent)
 {}
 
-void Client::sendData(const QJsonObject &data, const QString &type)
+void Client::sendData(const QString &type, const QJsonObject &data)
 {
     QJsonObject json;
     json["type"] = type;
