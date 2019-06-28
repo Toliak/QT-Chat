@@ -29,4 +29,4 @@ script:
   - cmake ..
   - cmake --build .
   - echo "Docker"
-  - docker build . --tag qt_chat
+  - docker build .
