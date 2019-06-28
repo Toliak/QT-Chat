@@ -8,7 +8,6 @@ image:
   - Visual Studio 2017
 configuration:
   - Release
-  - Debug
 platform:
   - x64
 environment:
@@ -35,6 +34,6 @@ before_build:
       cmake --version
       cmake .. -G %generator%
 build:
-  project: c:\projects\cmake-init\build\bmstu_hw_5.sln
+  project: c:\projects\cmake-init\build\qt_chat.sln
   verbosity: minimal
   parallel: true

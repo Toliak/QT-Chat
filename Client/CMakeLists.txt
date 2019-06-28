@@ -1,4 +1,4 @@
-project(bmstu_hw_5_client)
+project(qt_chat_client)
 
 set(CMAKE_CXX_STANDARD 14)
 

@@ -63,6 +63,10 @@ void WebSocketListener::onDisconnect()
 {
     auto *socket = qobject_cast<QWebSocket *>(sender());            ///< Connection
     if (!isSocketAvailable(socket)) {
+        if (socket && WebSocketListener::clients.contains(socket)) {
+            delete WebSocketListener::clients[socket];
+            WebSocketListener::clients.remove(socket);
+        }
         return;
     }
 
