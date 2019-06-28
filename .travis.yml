@@ -1,5 +1,8 @@
 language: cpp
 
+services:
+  - docker
+
 matrix:
   include:
     - os: linux
@@ -20,8 +23,10 @@ matrix:
 script:
   - sudo ln -s /usr/bin/gcc-8 /usr/local/bin/gcc
   - sudo ln -s /usr/bin/g++-8 /usr/local/bin/g++
-  - mkdir -p cmake-build-debug
-  - cd cmake-build-debug
-  - cmake --version
+  - mkdir -p build
+  - cd build
+  - echo "Compile"
   - cmake ..
   - cmake --build .
+  - echo "Docker"
+  - docker build . --tag qt_chat
