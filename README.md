@@ -11,8 +11,8 @@ QT Chat client and server. Using websocket protocol
 ### Windows
 
 ```ShellSession
-$ cmake -H. -B cmake-build-debug
-$ cmake --build cmake-build-debug
+cmake -H. -B cmake-build-debug
+cmake --build cmake-build-debug
 ```
 
 The Visual Studio solution will be created
@@ -20,8 +20,8 @@ The Visual Studio solution will be created
 ### Linux
 
 ```ShellSession
-$ cmake -H. -B cmake-build-debug
-$ cmake --build cmake-build-debug
+cmake -H. -B cmake-build-debug
+cmake --build cmake-build-debug
 ```
 
 The binaries will be created
@@ -29,6 +29,9 @@ The binaries will be created
 ### Docker (server only)
 
 ```ShellSession
-$ docker build . --tag toliak_chat
-$ docker run --rm -it -p 8880:8880 toliak_chat
+docker build . --tag qt_chat
+docker run --rm -itd -p 8880:8880 \
+                     -v $(pwd)/config:/home/qt_chat/config \
+                     -u $(id -u):$(id -g) \
+                     qt_chat
 ```

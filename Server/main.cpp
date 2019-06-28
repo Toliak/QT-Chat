@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication application(argc, argv);
 
-    auto *config = new Config("server.json");
+    auto *config = new Config("config/server.json");
 
     auto *listener = new ChatWebSocketListener(config);
     listener->start();
