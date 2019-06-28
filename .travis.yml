@@ -28,5 +28,6 @@ script:
   - echo "Compile"
   - cmake ..
   - cmake --build .
+  - cd ..
   - echo "Docker"
   - docker build .
